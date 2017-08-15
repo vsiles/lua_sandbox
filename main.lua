@@ -2,6 +2,7 @@ vector = require "vector"
 
 platform = {}
 player = {}
+camera = vector.new(0, 0)
 
 IDLE, LEFT, RIGHT, JUMP = 0, 1, 2, 3
 
@@ -34,6 +35,19 @@ end
 
 function love.update(dt)
     local img = player.img[player.state]
+
+    if love.keyboard.isDown('escape') then
+        love.event.quit()
+    end
+
+    if love.keyboard.isDown('left') then
+        camera.x = camera.x - 10
+    end
+    
+    if love.keyboard.isDown('right') then
+        camera.x = camera.x + 10
+    end
+
     if love.keyboard.isDown('d') then
         player.state = RIGHT
         if player.pos.x < (love.graphics.getWidth() - img:getWidth()) then
@@ -70,6 +84,12 @@ end
 
 function love.draw()
     love.graphics.setColor(255, 255, 255)
+    love.graphics.print(string.format("Y velocity = %d", player.y_velocity))
+    love.graphics.print(string.format("Player pos = %d, %d", player.pos.x, player.pos.y),
+                        0, 20)
+    
+    love.graphics.push()
+    love.graphics.translate(-camera.x, -camera.y)
 
     love.graphics.rectangle('fill', platform.pos.x, platform.pos.y,
                             platform.size.x, platform.size.y)
@@ -77,4 +97,6 @@ function love.draw()
     -- drawable, x, y, rotation (rad), scale x, scale y, origin offset x, origin offset y
     love.graphics.draw(player.img[player.state], player.pos.x, player.pos.y,
                        0, 1, 1, 0, 32)
+
+    love.graphics.pop()
 end
