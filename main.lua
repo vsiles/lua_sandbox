@@ -93,6 +93,22 @@ end
 
 function love.draw()
     love.graphics.setColor(255, 255, 255)
+    -- draw background grid
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+    local nw = nr_cells
+    local nh = height / 32
+
+    for i = 0, nw - 1 do
+        -- TODO: read doc -> line
+        love.graphics.rectangle('fill', 32 * i, 0, 1, height) 
+    end
+    for i = 0, nh - 1 do
+        -- TODO: read doc -> line
+        love.graphics.rectangle('fill', 0, 32 * i, width, 1)
+    end
+
+    -- display some info
     love.graphics.print(string.format("Y velocity = %d", player.y_velocity))
     love.graphics.print(string.format("Player pos = %d, %d", player.pos.x, player.pos.y),
                         0, 20)
