@@ -1,7 +1,6 @@
 vector = require "vector"
 
 level = {}
-platform = {}
 player = {}
 camera = vector.new(0, 0)
 nr_cells = 0
@@ -10,21 +9,20 @@ IDLE, LEFT, RIGHT, JUMP = 0, 1, 2, 3
 
 function love.load()
     -- level info
-    platform.size = vector.new(love.graphics.getWidth(),
-                               love.graphics.getHeight() / 2)
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
 
-    platform.pos = vector.new(0, platform.size.y)
 
-    nr_cells = platform.size.x / 32
+    nr_cells = width / 32
+    local nh = math.floor(height / 32) - 5
     for i = 0 , nr_cells - 1 do
         level[i] = {}
-        level[i].pos = vector.new(i * 32, platform.size.y)
-        level[i].size = vector.new(32, 32)
+        level[i].pos = vector.new(i, nh)
+        level[i].size = vector.new(1, 1)
     end
 
     -- player info
-    player.pos = vector.new(love.graphics.getWidth() / 2,
-                            love.graphics.getHeight() / 2)
+    player.pos = vector.new(love.graphics.getWidth() / 2, 32 * (nh - 1))
 
     player.img = {}
     player.img[IDLE] = love.graphics.newImage('gfx/purple.png')
@@ -50,11 +48,11 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown('left') then
-        camera.x = camera.x - 10
+        camera.x = camera.x - 32
     end
     
     if love.keyboard.isDown('right') then
-        camera.x = camera.x + 10
+        camera.x = camera.x + 32
     end
 
     if love.keyboard.isDown('d') then
@@ -116,19 +114,17 @@ function love.draw()
     love.graphics.push()
     love.graphics.translate(-camera.x, -camera.y)
 
-    --love.graphics.rectangle('fill', platform.pos.x, platform.pos.y,
-    --                        platform.size.x, platform.size.y)
     for i = 0, nr_cells - 1 do
         local ci = i * 255 / 32
         love.graphics.setColor(ci, 255 - ci, (255 - ci) / 2)
-        love.graphics.rectangle('fill', level[i].pos.x, level[i].pos.y,
-                                level[i].size.x, level[i].size.y)
+        love.graphics.rectangle('fill', 32 * level[i].pos.x, 32 * level[i].pos.y,
+                                32 * level[i].size.x, 32 * level[i].size.y)
     end
 
     -- drawable, x, y, rotation (rad), scale x, scale y, origin offset x, origin offset y
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(player.img[player.state], player.pos.x, player.pos.y,
-                       0, 1, 1, 0, 32)
+                       0, 1, 1, 0, 0)
 
     love.graphics.pop()
 end
