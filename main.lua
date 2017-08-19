@@ -1,8 +1,10 @@
 vector = require "vector"
 
+level = {}
 platform = {}
 player = {}
 camera = vector.new(0, 0)
+nr_cells = 0
 
 IDLE, LEFT, RIGHT, JUMP = 0, 1, 2, 3
 
@@ -12,6 +14,13 @@ function love.load()
                                love.graphics.getHeight() / 2)
 
     platform.pos = vector.new(0, platform.size.y)
+
+    nr_cells = platform.size.x / 32
+    for i = 0 , nr_cells - 1 do
+        level[i] = {}
+        level[i].pos = vector.new(i * 32, platform.size.y)
+        level[i].size = vector.new(32, 32)
+    end
 
     -- player info
     player.pos = vector.new(love.graphics.getWidth() / 2,
@@ -91,10 +100,17 @@ function love.draw()
     love.graphics.push()
     love.graphics.translate(-camera.x, -camera.y)
 
-    love.graphics.rectangle('fill', platform.pos.x, platform.pos.y,
-                            platform.size.x, platform.size.y)
+    --love.graphics.rectangle('fill', platform.pos.x, platform.pos.y,
+    --                        platform.size.x, platform.size.y)
+    for i = 0, nr_cells - 1 do
+        local ci = i * 255 / 32
+        love.graphics.setColor(ci, 255 - ci, (255 - ci) / 2)
+        love.graphics.rectangle('fill', level[i].pos.x, level[i].pos.y,
+                                level[i].size.x, level[i].size.y)
+    end
 
     -- drawable, x, y, rotation (rad), scale x, scale y, origin offset x, origin offset y
+    love.graphics.setColor(255, 255, 255)
     love.graphics.draw(player.img[player.state], player.pos.x, player.pos.y,
                        0, 1, 1, 0, 32)
 
