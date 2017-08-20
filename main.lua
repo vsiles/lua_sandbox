@@ -48,11 +48,11 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown('left') then
-        camera.x = camera.x - 32
+        camera.x = camera.x - 10
     end
     
     if love.keyboard.isDown('right') then
-        camera.x = camera.x + 32
+        camera.x = camera.x + 10
     end
 
     if love.keyboard.isDown('d') then
@@ -91,19 +91,28 @@ end
 
 function love.draw()
     love.graphics.setColor(255, 255, 255)
+
+    local p1x = camera.x % 32
+    local p1y = camera.y % 32
+    local p2x = camera.x - p1x
+    local p2y = camera.y - p1y
+
+    love.graphics.push()
+    love.graphics.translate(-p1x, -p1y)
+
     -- draw background grid
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
     local nw = nr_cells
     local nh = height / 32
 
-    for i = 0, nw - 1 do
+    for i = 0, nw do
         -- TODO: read doc -> line
-        love.graphics.rectangle('fill', 32 * i, 0, 1, height) 
+        love.graphics.rectangle('fill', 32 * i, 0, 1, height + 32) 
     end
-    for i = 0, nh - 1 do
+    for i = 0, nh do
         -- TODO: read doc -> line
-        love.graphics.rectangle('fill', 0, 32 * i, width, 1)
+        love.graphics.rectangle('fill', 0, 32 * i, width + 32, 1)
     end
 
     -- display some info
@@ -112,7 +121,7 @@ function love.draw()
                         0, 20)
     
     love.graphics.push()
-    love.graphics.translate(-camera.x, -camera.y)
+    love.graphics.translate(-p2x, -p2y)
 
     for i = 0, nr_cells - 1 do
         local ci = i * 255 / 32
@@ -126,5 +135,6 @@ function love.draw()
     love.graphics.draw(player.img[player.state], player.pos.x, player.pos.y,
                        0, 1, 1, 0, 0)
 
+    love.graphics.pop()
     love.graphics.pop()
 end
