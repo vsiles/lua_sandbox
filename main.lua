@@ -7,7 +7,14 @@ nr_cells = 0
 
 IDLE, LEFT, RIGHT, JUMP = 0, 1, 2, 3
 
+function pos2cell(x, y)
+    local i = x / 32
+    local j = y / 32
+    return vector.new(math.floor(i), math.floor(j))
+end
+
 function love.load()
+
     -- level info
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
@@ -130,10 +137,27 @@ function love.draw()
                                 32 * level[i].size.x, 32 * level[i].size.y)
     end
 
+    -- draw collision tiles
+    love.graphics.setColor(255, 0, 0)
+
+    local x = player.pos.x
+    local y = player.pos.y
+    local w, h = 32, 32
+
+    c1 = pos2cell(x, y)
+    c2 = pos2cell(x + w - 1, y)
+    c3 = pos2cell(x, y + h - 1)
+    c4 = pos2cell(x + w - 1, y + h - 1)
+
+    -- don't check yet for duplicates...
+    love.graphics.rectangle('line', 32 * c1.x, 32 * c1.y, 32, 32)
+    love.graphics.rectangle('line', 32 * c2.x, 32 * c2.y, 32, 32)
+    love.graphics.rectangle('line', 32 * c3.x, 32 * c3.y, 32, 32)
+    love.graphics.rectangle('line', 32 * c4.x, 32 * c4.y, 32, 32)
+
     -- drawable, x, y, rotation (rad), scale x, scale y, origin offset x, origin offset y
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(player.img[player.state], player.pos.x, player.pos.y,
-                       0, 1, 1, 0, 0)
+    love.graphics.draw(player.img[player.state], x, y, 0, 1, 1, 0, 0)
 
     love.graphics.pop()
     love.graphics.pop()
