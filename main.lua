@@ -4,6 +4,7 @@ level = {}
 player = {}
 camera = vector.new(0, 0)
 nr_cells = 0
+nr_lines = 0
 
 IDLE, LEFT, RIGHT, JUMP = 0, 1, 2, 3
 
@@ -20,13 +21,23 @@ function love.load()
     local height = love.graphics.getHeight()
 
 
-    nr_cells = width / 32
+    local nr_cells_plat = width / 32
+    nr_lines = nr_cells_plat
+    nr_cells = nr_cells_plat + 2
     local nh = math.floor(height / 32) - 5
-    for i = 0 , nr_cells - 1 do
+    for i = 0 , nr_cells_plat - 1 do
         level[i] = {}
         level[i].pos = vector.new(i, nh)
         level[i].size = vector.new(1, 1)
     end
+
+    level[nr_cells_plat] = {}
+    level[nr_cells_plat].pos = vector.new(10, nh - 2)
+    level[nr_cells_plat].size = vector.new(1, 1)
+
+    level[nr_cells_plat + 1] = {}
+    level[nr_cells_plat + 1].pos = vector.new(11, nh - 2)
+    level[nr_cells_plat + 1].size = vector.new(1, 1)
 
     -- player info
     player.pos = vector.new(love.graphics.getWidth() / 2, 32 * (nh - 1))
