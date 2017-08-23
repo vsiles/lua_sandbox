@@ -107,6 +107,34 @@ function love.update(dt)
     end
 end
 
+function collision(player, cell)
+    local phalfsize = 16
+    local pcenter = player.pos.x + phalfsize
+
+    local chalfsize = 16 * cell.size.x
+    local ccenter = 32 * cell.pos.x + chalfsize
+
+    local dist1 = math.abs(pcenter - ccenter)
+    local dist2 = phalfsize + chalfsize
+    if dist1 >= dist2 then
+        return false
+    end
+
+    phalfsize = 16
+    pcenter = player.pos.y + phalfsize
+
+    chalfsize = 16 * cell.size.y
+    ccenter = 32 * cell.pos.y + chalfsize
+
+    dist1 = math.abs(pcenter - ccenter)
+    dist2 = phalfsize + chalfsize
+    if dist1 >= dist2 then
+        return false
+    end
+
+    return true
+end
+
 function love.draw()
     love.graphics.setColor(255, 255, 255)
 
@@ -115,6 +143,11 @@ function love.draw()
     local p2x = camera.x - p1x
     local p2y = camera.y - p1y
 
+    -- display some info
+    love.graphics.print(string.format("Y velocity = %d", player.y_velocity), 10, 10)
+    love.graphics.print(string.format("Player pos = %d, %d", player.pos.x, player.pos.y),
+                        10, 40)
+    
     love.graphics.push()
     love.graphics.translate(-p1x, -p1y)
 
@@ -133,16 +166,14 @@ function love.draw()
         love.graphics.rectangle('fill', 0, 32 * i, width + 32, 1)
     end
 
-    -- display some info
-    love.graphics.print(string.format("Y velocity = %d", player.y_velocity))
-    love.graphics.print(string.format("Player pos = %d, %d", player.pos.x, player.pos.y),
-                        0, 20)
-    
     love.graphics.push()
     love.graphics.translate(-p2x, -p2y)
 
     for i = 0, nr_cells - 1 do
         local ci = i * 255 / 32
+        if collision(player, level[i]) then
+            print("collision !")
+        end
         love.graphics.setColor(ci, 255 - ci, (255 - ci) / 2)
         love.graphics.rectangle('fill', 32 * level[i].pos.x, 32 * level[i].pos.y,
                                 32 * level[i].size.x, 32 * level[i].size.y)
